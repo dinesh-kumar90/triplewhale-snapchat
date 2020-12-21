@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapChat Ads Accounts</title>
+</head>
+<body>
+    <h1>Ad Accounts</h1>
+    <ul class="list-group">
+        <% data.adaccounts.forEach(function(entry) {%>
+            <li>
+                <a href="/accounts/stat?account_id=<%=entry.adaccount.id%>" class="list-group-item text-dark"><%=entry.adaccount.name%></a>
+            </li>
+        <%});%>
+    </ul>
+</body>
+</html>

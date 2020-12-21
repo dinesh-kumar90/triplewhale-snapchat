@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapChat Organizations</title>
+</head>
+<body>
+    <h1>Organizations</h1>
+    <ul class="list-group">
+        <% data.organizations.forEach(function(entry) {%>
+            <li>
+                <a href="/accounts?organization_id=<%=entry.organization.id%>" class="list-group-item text-dark"><%=entry.organization.name%></a>
+            </li>
+        <%});%>
+    </ul>
+</body>
+</html>
