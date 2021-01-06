@@ -71,17 +71,73 @@ app.get('/accounts', (req, res) => {
     }
 });
 
+app.get('/campaigns', (req, res) => {
+    let accountId = '';
+    if (req.query.account_id) {
+        accountId = req.query.account_id;
+    }
+    if (req.session.tokens) {
+        const url = `https://adsapi.snapchat.com/v1/adaccounts/${accountId}/campaigns`;
+        snap.request(url, { method: 'GET' }, function(err, stats) {
+            if(err) {
+                console.log(err);
+                res.redirect('/snap/authorize');
+                // res.json(err);
+            } else {
+                console.log(stats);
+                res.json(stats);
+            }
+        });
+    } else {
+        res.redirect('/snap/authorize');
+    }
+});
+
 app.get('/accounts/stat', (req, res) => {
     let accountId = '';
     if (req.query.account_id) {
         accountId = req.query.account_id;
     }
-    const url = `https://adsapi.snapchat.com/v1/adaccounts/${accountId}/stats`;
+    let startTime = '';
+    let endTime = '';
+    if (req.query.start_time) {
+        startTime = `&start_time=${req.query.start_time}`;
+    }
+    if (req.query.end_time) {
+        endTime = `&end_time=${req.query.end_time}`;
+    }
+    const url = `https://adsapi.snapchat.com/v1/adaccounts/${accountId}/stats?granularity=DAY${startTime}${endTime}`;
     snap.request(url, { method: 'GET' }, function(err, stats) {
         if(err) {
             console.log(err);
-            res.redirect('/snap/authorize');
-            // res.json(err);
+            // res.redirect('/snap/authorize');
+            res.json(err);
+        } else {
+            console.log(stats);
+            res.json(stats);
+        }
+    });
+});
+
+app.get('/campaigns/stat', (req, res) => {
+    let accountId = '';
+    if (req.query.campaign_id) {
+        accountId = req.query.campaign_id;
+    }
+    let startTime = '';
+    let endTime = '';
+    if (req.query.start_time) {
+        startTime = `&start_time=${req.query.start_time}`;
+    }
+    if (req.query.end_time) {
+        endTime = `&end_time=${req.query.end_time}`;
+    }
+    const url = `https://adsapi.snapchat.com/v1/campaigns/${accountId}/stats?granularity=DAY${startTime}${endTime}`;
+    snap.request(url, { method: 'GET' }, function(err, stats) {
+        if(err) {
+            console.log(err);
+            // res.redirect('/snap/authorize');
+            res.json(err);
         } else {
             console.log(stats);
             res.json(stats);
