@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapChat Ads Campaigns Stats</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<body>
+    <h1>Ad campaigns stats</h1>
+    <table class="table">
+        <tr>
+            <th>Total Cost</th>
+            <th>Total Revenue</th>
+            <th>Purchase ROAS</th>
+        </tr>
+        <% data.total_stats.forEach(function(st) {%>
+            <tr>
+                <td><%=st.total_stat.stats.spend / 1000000%></td>
+                <td><%=st.total_stat.stats.conversion_purchases_value / 1000000%></td>
+                <td><%=st.total_stat.stats.conversion_purchases_value / st.total_stat.stats.spend%></td>
+            </tr>
+        <%});%>
+    </table>
+</body>
+</html>

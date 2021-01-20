@@ -6,11 +6,12 @@
     <title>SnapChat Ads Accounts</title>
 </head>
 <body>
-    <h1>Ad Accounts</h1>
+    <h1>Ad campaigns</h1>
     <ul class="list-group">
         <% data.adaccounts.forEach(function(entry) {%>
             <li>
                 <a href="/accounts/stat?account_id=<%=entry.adaccount.id%>" class="list-group-item text-dark"><%=entry.adaccount.name%></a>
+                <a style="padding-left: 50px;" href="/campaigns?account_id=<%=entry.adaccount.id%>" class="list-group-item text-dark">Campaigns</a>
             </li>
         <%});%>
     </ul>

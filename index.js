@@ -85,7 +85,8 @@ app.get('/campaigns', (req, res) => {
                 // res.json(err);
             } else {
                 console.log(stats);
-                res.json(stats);
+                // res.json(stats);
+                res.render('campaigns', {data: stats})
             }
         });
     } else {
@@ -132,7 +133,7 @@ app.get('/campaigns/stat', (req, res) => {
     if (req.query.end_time) {
         endTime = `&end_time=${req.query.end_time}`;
     }
-    const url = `https://adsapi.snapchat.com/v1/campaigns/${accountId}/stats?granularity=DAY${startTime}${endTime}`;
+    const url = `https://adsapi.snapchat.com/v1/campaigns/${accountId}/stats?granularity=TOTAL${startTime}${endTime}&fields=conversion_purchases,conversion_purchases_value,impressions,swipes,spend`;
     snap.request(url, { method: 'GET' }, function(err, stats) {
         if(err) {
             console.log(err);
@@ -140,7 +141,15 @@ app.get('/campaigns/stat', (req, res) => {
             res.json(err);
         } else {
             console.log(stats);
-            res.json(stats);
+            res.render('stats', {data: stats})
+            // let response = [];
+            // stats.total_stats.map((st) => {
+            //     let roas = st.total_stat.stats.conversion_purchases_value/st.total_stat.stats.spend;
+            //     let statData = st;
+            //     statData.total_stats.stats.roas = roas;
+            //     response.push(statData);
+            // });
+            // res.json(response);
         }
     });
 });
