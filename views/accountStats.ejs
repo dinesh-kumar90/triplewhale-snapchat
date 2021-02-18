@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapChat Ads Campaigns Stats</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $( function() {
+            $( "#start_time" ).datepicker();
+            $( "#end_time" ).datepicker();
+        } );
+    </script>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Ad Account stats</h1>
+        <form action="/accounts/stat" method="get">
+            <input type="hidden" name="account_id" value="<%=data.account_id%>" />
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="start_time" name="start_time" value="<%=data.start_time%>" />
+                </div>
+                <div class="col">
+                    <input type="text" id="end_time" name="end_time"value="<%=data.end_time%>" />
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn">Submit</button>
+                </div>
+            </div>
+        </form>
+        <table class="table">
+            <tr>
+                <th>Total Cost</th>
+                <th>Total Revenue</th>
+                <th>Purchase ROAS</th>
+            </tr>
+            <tr>
+                <td><%=data.spend%></td>
+                <td><%=data.revenue%></td>
+                <td><%=data.roas%></td>
+            </tr>
+        </table>
+    </div>
+    
+</body>
+</html>

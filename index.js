@@ -1,5 +1,6 @@
 const express = require('express');
 const fetch = require('node-fetch');
+const moment = require('moment');
 const Snap = require('node-snapchat-marketing');
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
@@ -94,30 +95,79 @@ app.get('/campaigns', (req, res) => {
     }
 });
 
-app.get('/accounts/stat', (req, res) => {
+app.get('/accounts/stat', async (req, res) => {
     let accountId = '';
     if (req.query.account_id) {
         accountId = req.query.account_id;
     }
-    let startTime = '';
-    let endTime = '';
-    if (req.query.start_time) {
-        startTime = `&start_time=${req.query.start_time}`;
-    }
-    if (req.query.end_time) {
-        endTime = `&end_time=${req.query.end_time}`;
-    }
-    const url = `https://adsapi.snapchat.com/v1/adaccounts/${accountId}/stats?granularity=DAY${startTime}${endTime}`;
-    snap.request(url, { method: 'GET' }, function(err, stats) {
+    let spend = 0;
+    let revenue = 0;
+    let roas = 0;
+    const url = `https://adsapi.snapchat.com/v1/adaccounts/${accountId}/campaigns`;
+    await snap.request(url, { method: 'GET' }, function(err, stats) {
         if(err) {
             console.log(err);
-            // res.redirect('/snap/authorize');
-            res.json(err);
+            res.redirect('/snap/authorize');
         } else {
-            console.log(stats);
-            res.json(stats);
+            stats.campaigns.map(async (campaign, index) => {
+                const campaignId = campaign.campaign.id;
+                let startTime = '';
+                let endTime = '';
+                if (req.query.start_time) {
+                    startTime = `&start_time=${moment(req.query.start_time, 'MM/DD/YYYY').format('YYYY-MM-DDTHH:mm:ss.SSS')}-05:00`;
+                }
+                if (req.query.end_time) {
+                    endTime = `&end_time=${moment(req.query.end_time, 'MM/DD/YYYY').format('YYYY-MM-DDTHH:mm:ss.SSS')}-05:00`;
+                }
+                const urlCampaign = `https://adsapi.snapchat.com/v1/campaigns/${campaignId}/stats?granularity=TOTAL${startTime}${endTime}&fields=conversion_purchases,conversion_purchases_value,impressions,swipes,spend`;
+                await snap.request(urlCampaign, { method: 'GET' }, async function(err, statsCampaign) {
+                    if(err) {
+                        console.log(err);
+                        res.json(err);
+                    } else {
+                        spend = spend + (statsCampaign.total_stats[0].total_stat.stats.spend / 1000000);
+                        revenue = revenue + (statsCampaign.total_stats[0].total_stat.stats.conversion_purchases_value / 1000000);
+                        if (index + 1 === stats.campaigns.length) {
+                            setTimeout(() => {
+                                roas = revenue / spend;
+                                const responseData = {
+                                    spend: spend,
+                                    revenue: revenue,
+                                    roas: roas,
+                                    account_id: accountId,
+                                    start_time: req.query.start_time,
+                                    end_time: req.query.end_time,
+                                };
+                                res.render('accountStats', {data: responseData})
+                                // res.json(responseData);
+                            }, 4000)
+                            
+                        }
+                    }
+                });
+            });
         }
     });
+    
+    // let startTime = '';
+    // let endTime = '';
+    // if (req.query.start_time) {
+    //     startTime = `&start_time=${req.query.start_time}`;
+    // }
+    // if (req.query.end_time) {
+    //     endTime = `&end_time=${req.query.end_time}`;
+    // }
+    // const url = `https://adsapi.snapchat.com/v1/adaccounts/${accountId}/stats?granularity=TOTAL${startTime}${endTime}&fields=spend`;
+    // snap.request(url, { method: 'GET' }, function(err, stats) {
+    //     if(err) {
+    //         console.log(err);
+    //         // res.redirect('/snap/authorize');
+    //         res.json(err);
+    //     } else {
+    //         console.log(stats);
+    //         res.json(stats);
+    //     }
+    // });
 });
 
 app.get('/campaigns/stat', (req, res) => {
